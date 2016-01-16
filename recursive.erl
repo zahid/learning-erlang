@@ -13,7 +13,9 @@
     zip/2,
     lenient_zip/2,
     tail_zip/2,
-    tail_lenient_zip/2]).
+    tail_lenient_zip/2,
+    quicksort/1,
+    lc_quicksort/1]).
 
 len([]) -> 0;
 len([_|T]) -> 1 + len(T).
@@ -84,3 +86,20 @@ tail_lenient_zip([],[],Acc) -> Acc;
 tail_lenient_zip([X|Xs],[],Acc) -> tail_lenient_zip(Xs,[],[{X,empty}|Acc]);
 tail_lenient_zip([],[Y|Ys],Acc) -> tail_lenient_zip([],Ys,[{empty,Y}|Acc]);
 tail_lenient_zip([X|Xs],[Y|Ys],Acc) -> tail_lenient_zip(Xs,Ys,[{X,Y}|Acc]).
+
+quicksort([]) -> [];
+quicksort([Pivot|Rest]) ->
+    {Smaller,Larger} = partition(Pivot, Rest, [], []),
+    quicksort(Smaller) ++ [Pivot] ++ quicksort(Larger).
+
+partition(_,[],Smaller,Larger) -> {Smaller,Larger};
+partition(Pivot, [H|T], Smaller, Larger) ->
+    if H =< Pivot -> partition(Pivot, T, [H|Smaller], Larger);
+        H > Pivot -> partition(Pivot, T, Smaller, [H|Larger])
+    end.
+
+lc_quicksort([]) -> [];
+lc_quicksort([Pivot|Rest]) ->
+    lc_quicksort([Smaller || Smaller <- Rest, Smaller =< Pivot])
+    ++ [Pivot] ++
+    lc_quicksort([Larger || Larger <- Rest, Larger > Pivot]).
